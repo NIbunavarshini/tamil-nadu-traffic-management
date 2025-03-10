@@ -2,20 +2,31 @@ import streamlit as st
 import folium
 from utils.map_utils import create_base_map, display_map, add_marker
 from utils.translations import get_text
+from data.mock_data import MAJOR_CITIES
 
 def main():
     st.title(get_text("route_management_title", "English"))
-    
+
     # Create two columns for origin and destination
     col1, col2 = st.columns(2)
-    
+
+    city_names = [city["name"] for city in MAJOR_CITIES]
+
     with col1:
-        origin = st.text_input(get_text("origin_label", "English"), 
-                             "Chennai")
-        
+        origin = st.selectbox(
+            get_text("origin_label", "English"),
+            options=city_names,
+            index=city_names.index("Chennai") if "Chennai" in city_names else 0
+        )
+
     with col2:
-        destination = st.text_input(get_text("destination_label", "English"), 
-                                  "Coimbatore")
+        # Filter out origin city from destination options
+        dest_options = [city for city in city_names if city != origin]
+        destination = st.selectbox(
+            get_text("destination_label", "English"),
+            options=dest_options,
+            index=dest_options.index("Coimbatore") if "Coimbatore" in dest_options else 0
+        )
 
     # Route options
     route_type = st.radio(
@@ -25,35 +36,40 @@ def main():
 
     # Create map
     m = create_base_map()
-    
-    # Example coordinates (Chennai to Coimbatore)
-    route_coordinates = [
-        [13.0827, 80.2707],  # Chennai
-        [11.0168, 76.9558]   # Coimbatore
-    ]
+
+    # Get coordinates for selected cities
+    origin_coords = next(city["location"] for city in MAJOR_CITIES if city["name"] == origin)
+    dest_coords = next(city["location"] for city in MAJOR_CITIES if city["name"] == destination)
 
     # Draw route line
     folium.PolyLine(
-        route_coordinates,
+        [origin_coords, dest_coords],
         weight=3,
         color='blue',
         opacity=0.8
     ).add_to(m)
 
-    # Add markers for origin and destination
-    add_marker(m, route_coordinates[0], "Chennai", "info-sign")
-    add_marker(m, route_coordinates[1], "Coimbatore", "info-sign")
+    # Add markers for all major cities
+    for city in MAJOR_CITIES:
+        icon = None
+        if city["name"] == origin:
+            icon = "play"
+        elif city["name"] == destination:
+            icon = "stop"
+
+        add_marker(m, city["location"], city["name"], icon)
 
     # Display map
     display_map(m)
 
     # Traffic alerts section
     st.subheader(get_text("traffic_alerts_title", "English"))
-    
+
     # Mock traffic alerts
     alerts = [
         {"location": "Guindy", "type": "Construction", "delay": "20 mins"},
-        {"location": "Salem", "type": "Accident", "delay": "15 mins"}
+        {"location": "Salem", "type": "Accident", "delay": "15 mins"},
+        {"location": "Trichy", "type": "Road Work", "delay": "25 mins"}
     ]
 
     for alert in alerts:
@@ -63,12 +79,11 @@ def main():
 
     # Alternative routes
     st.subheader(get_text("alternative_routes_title", "English"))
-    
-    alt_routes = st.expander("Show Alternative Routes")
-    with alt_routes:
-        st.write("Route 1: Via Salem - 6 hours")
-        st.write("Route 2: Via Trichy - 7 hours")
-        st.write("Route 3: Via Madurai - 8 hours")
+
+    with st.expander("Show Alternative Routes"):
+        st.write(f"Route 1: Via Salem - Estimated time: 6 hours")
+        st.write(f"Route 2: Via Trichy - Estimated time: 7 hours")
+        st.write(f"Route 3: Via Madurai - Estimated time: 8 hours")
 
 if __name__ == "__main__":
     main()
