@@ -1,32 +1,34 @@
 import streamlit as st
 from data.mock_data import EMERGENCY_CONTACTS, FIRST_AID_STEPS
 from utils.map_utils import create_base_map, display_map, add_marker
+import folium
 
 def main():
     st.title("Emergency Response System")
 
     # Emergency contact numbers
     st.header("Emergency Contacts")
-    
+
     cols = st.columns(len(EMERGENCY_CONTACTS))
-    for col, (service, number) in zip(cols, EMERGENCY_CONTACTS.items()):
-        with col:
-            st.button(f"{service}: {number}")
+    for idx, (service, number) in enumerate(EMERGENCY_CONTACTS.items()):
+        with cols[idx]:
+            st.button(f"{service}: {number}", key=f"emergency_{service.lower()}_btn")
 
     # Accident reporting form
     st.header("Report an Accident")
-    
-    with st.form("accident_report"):
-        location = st.text_input("Location")
+
+    with st.form("accident_report", clear_on_submit=True):
+        location = st.text_input("Location", key="accident_location")
         severity = st.select_slider(
             "Incident Severity",
-            options=["Minor", "Moderate", "Severe", "Critical"]
+            options=["Minor", "Moderate", "Severe", "Critical"],
+            key="accident_severity"
         )
-        description = st.text_area("Description")
-        need_ambulance = st.checkbox("Need Ambulance?")
-        
+        description = st.text_area("Description", key="accident_description")
+        need_ambulance = st.checkbox("Need Ambulance?", key="need_ambulance")
+
         submitted = st.form_submit_button("Submit Report")
-        
+
         if submitted:
             st.success("Emergency services have been notified!")
             if need_ambulance:
@@ -34,31 +36,32 @@ def main():
 
     # First aid instructions
     st.header("First Aid Instructions")
-    
-    for step in FIRST_AID_STEPS:
-        with st.expander(step['title']):
+
+    for idx, step in enumerate(FIRST_AID_STEPS):
+        with st.expander(step['title'], key=f"first_aid_step_{idx}"):
             col1, col2 = st.columns([1, 2])
-            
+
             with col1:
                 st.image(step['image_url'], 
                         caption=step['title'])
-                
+
             with col2:
                 st.write(step['description'])
 
     # Emergency rerouting
     st.header("Emergency Rerouting")
-    
+
     # Create map for rerouting
     m = create_base_map()
-    
+
     # Example accident location
     accident_location = [13.0827, 80.2707]
     add_marker(m, accident_location, "Accident Location", "warning-sign")
 
     # Display alternative routes
+    route_coords = [[13.0827, 80.2707], [13.0500, 80.2500], [13.0300, 80.2300]]
     folium.PolyLine(
-        [[13.0827, 80.2707], [13.0500, 80.2500], [13.0300, 80.2300]],
+        route_coords,
         color="green",
         weight=3,
         opacity=0.8

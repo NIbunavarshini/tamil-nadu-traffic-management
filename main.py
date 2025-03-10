@@ -17,7 +17,8 @@ with open('assets/custom.css') as f:
 language = st.sidebar.selectbox(
     "भाषा / Language / மொழி",
     ["தமிழ்", "English"],
-    index=1
+    index=1,
+    key="language_selector"
 )
 
 st.title(get_text("main_title", language))
@@ -35,14 +36,14 @@ with col2:
     st.image("https://images.unsplash.com/photo-1422765732560-d03723b2c6b1",
              caption=get_text("transport_caption", language))
     st.header(get_text("quick_actions", language))
-    
-    if st.button(get_text("report_accident", language)):
+
+    if st.button(get_text("report_accident", language), key="report_accident_btn"):
         st.switch_page("pages/emergency.py")
-    
-    if st.button(get_text("find_parking", language)):
+
+    if st.button(get_text("find_parking", language), key="find_parking_btn"):
         st.switch_page("pages/parking.py")
-    
-    if st.button(get_text("ev_charging", language)):
+
+    if st.button(get_text("ev_charging", language), key="ev_charging_btn"):
         st.switch_page("pages/ev_stations.py")
 
 # Footer

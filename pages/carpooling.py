@@ -7,29 +7,30 @@ def main():
 
     # Create/Join Carpool section
     st.header("Create or Join Carpool")
-    
+
     tab1, tab2 = st.tabs(["Create Carpool", "Find Carpool"])
 
     with tab1:
-        with st.form("create_carpool"):
-            origin = st.text_input("Starting Point")
-            destination = st.text_input("Destination")
-            date = st.date_input("Date")
-            time = st.time_input("Time")
-            seats = st.number_input("Available Seats", 1, 4, 2)
-            vehicle = st.text_input("Vehicle Details")
-            price = st.number_input("Price per Person (₹)", 0, 1000, 100)
-            
+        with st.form("create_carpool", clear_on_submit=True):
+            origin = st.text_input("Starting Point", key="create_origin")
+            destination = st.text_input("Destination", key="create_destination")
+            date = st.date_input("Date", key="create_date")
+            time = st.time_input("Time", key="create_time")
+            seats = st.number_input("Available Seats", 1, 4, 2, key="create_seats")
+            vehicle = st.text_input("Vehicle Details", key="create_vehicle")
+            price = st.number_input("Price per Person (₹)", 0, 1000, 100, key="create_price")
+
             if st.form_submit_button("Create Carpool"):
                 st.success("Carpool created successfully!")
 
     with tab2:
-        st.text_input("Search Route", "Chennai to Coimbatore")
-        st.date_input("Travel Date")
-        
+        st.text_input("Search Route", "Chennai to Coimbatore", key="search_route")
+        st.date_input("Travel Date", key="search_date")
+
         # Mock available carpools
         mock_carpools = [
             {
+                "id": 1,
                 "route": "Chennai to Coimbatore",
                 "date": "2024-01-20",
                 "time": "07:00",
@@ -38,6 +39,7 @@ def main():
                 "rating": 4.5
             },
             {
+                "id": 2,
                 "route": "Chennai to Coimbatore",
                 "date": "2024-01-20",
                 "time": "09:00",
@@ -48,25 +50,25 @@ def main():
         ]
 
         for carpool in mock_carpools:
-            with st.expander(f"{carpool['route']} - {carpool['time']}"):
+            with st.expander(f"{carpool['route']} - {carpool['time']}", key=f"carpool_{carpool['id']}"):
                 col1, col2, col3 = st.columns(3)
-                
+
                 with col1:
                     st.metric("Available Seats", carpool['seats'])
-                    
+
                 with col2:
                     st.metric("Price", carpool['price'])
-                    
+
                 with col3:
                     st.metric("Rating", carpool['rating'])
-                    
-                if st.button(f"Join this carpool to {carpool['route']}"):
+
+                if st.button("Join Carpool", key=f"join_carpool_{carpool['id']}"):
                     st.success("Request sent to the driver!")
 
     # Community Guidelines
     st.header("Community Guidelines")
-    
-    guidelines = st.expander("Read Guidelines")
+
+    guidelines = st.expander("Read Guidelines", key="guidelines")
     with guidelines:
         st.write("""
         1. Verify your profile
@@ -88,7 +90,7 @@ def main():
         • User Ratings
         • Report System
         """)
-        
+
         st.header("Stats")
         st.metric("Active Users", "1,200+")
         st.metric("Completed Rides", "5,000+")
