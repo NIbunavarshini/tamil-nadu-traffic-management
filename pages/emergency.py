@@ -38,7 +38,8 @@ def main():
     st.header("First Aid Instructions")
 
     for idx, step in enumerate(FIRST_AID_STEPS):
-        with st.expander(step['title'], key=f"first_aid_step_{idx}"):
+        # Using descriptive label instead of key
+        with st.expander(f"Step {idx + 1}: {step['title']}"):
             col1, col2 = st.columns([1, 2])
 
             with col1:

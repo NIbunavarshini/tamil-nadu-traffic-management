@@ -50,7 +50,8 @@ def main():
         ]
 
         for carpool in mock_carpools:
-            with st.expander(f"{carpool['route']} - {carpool['time']}", key=f"carpool_{carpool['id']}"):
+            # Using unique label instead of key
+            with st.expander(f"Route {carpool['id']}: {carpool['route']} - {carpool['time']}"):
                 col1, col2, col3 = st.columns(3)
 
                 with col1:
@@ -68,8 +69,8 @@ def main():
     # Community Guidelines
     st.header("Community Guidelines")
 
-    guidelines = st.expander("Read Guidelines", key="guidelines")
-    with guidelines:
+    # Using descriptive label instead of key
+    with st.expander("Community Guidelines and Rules"):
         st.write("""
         1. Verify your profile
         2. Be punctual
