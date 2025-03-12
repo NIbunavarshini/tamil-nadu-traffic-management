@@ -1,11 +1,12 @@
-modules = ["python-3.11"]
+modules = ["python-3.11", "web", "bash"]
+run = "streamlit run main.py --server.port 5000 --server.address 0.0.0.0"
 
 [nix]
 channel = "stable-24_05"
 
 [deployment]
 deploymentTarget = "autoscale"
-run = ["sh", "-c", "streamlit run main.py"]
+run = ["sh", "-c", "streamlit run main.py --server.port 5000 --server.address 0.0.0.0"]
 
 [workflows]
 runButton = "Project"
