@@ -47,7 +47,7 @@ with col2:
 
     if st.button(get_text("ev_charging", language), key="ev_charging_btn"):
         st.session_state.page = "ev_stations"
-        st.experimental_rerun()_page("pages/ev_stations.py")
+        st.experimental_rerun()
 
 # Footer
 st.markdown("---")
