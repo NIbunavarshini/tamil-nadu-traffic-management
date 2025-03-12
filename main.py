@@ -38,13 +38,16 @@ with col2:
     st.header(get_text("quick_actions", language))
 
     if st.button(get_text("report_accident", language), key="report_accident_btn"):
-        st.switch_page("pages/emergency.py")
+        st.session_state.page = "emergency"
+        st.experimental_rerun()
 
     if st.button(get_text("find_parking", language), key="find_parking_btn"):
-        st.switch_page("pages/parking.py")
+        st.session_state.page = "parking"
+        st.experimental_rerun()
 
     if st.button(get_text("ev_charging", language), key="ev_charging_btn"):
-        st.switch_page("pages/ev_stations.py")
+        st.session_state.page = "ev_stations"
+        st.experimental_rerun()_page("pages/ev_stations.py")
 
 # Footer
 st.markdown("---")
